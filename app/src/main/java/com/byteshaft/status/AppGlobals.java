@@ -13,6 +13,7 @@ public class AppGlobals extends Application {
     public static final String KEY_ID = "id";
 
     public static String GET_URL;
+    public static String POST_URL;
 
     @Override
     public void onCreate() {
@@ -22,11 +23,14 @@ public class AppGlobals extends Application {
             GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s",
                     getStringFromSharedPreferences(KEY_ID),
                     getStringFromSharedPreferences(KEY_PASSWORD));
+            POST_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s&amp;status=",
+                    getStringFromSharedPreferences(KEY_ID),
+                    getStringFromSharedPreferences(KEY_PASSWORD));
         }
     }
 
 
-    public static void saveState(boolean state) {
+    public static void saveData(boolean state) {
         SharedPreferences sharedPreferences = getPreferenceManager();
         sharedPreferences.edit().putBoolean(IS_DATA_SAVED, state).apply();
     }

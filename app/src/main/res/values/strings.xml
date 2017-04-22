@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Status</string>
+    <string name="reply_label">TEST</string>
+    <string name="label">bilal</string>
+    <string name="title">Title</string>
+    <string name="content">content</string>
 </resources>
