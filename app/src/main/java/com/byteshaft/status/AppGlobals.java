@@ -20,10 +20,10 @@ public class AppGlobals extends Application {
         super.onCreate();
         sContext = getApplicationContext();
         if (isDataSaved()) {
-            GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s",
+            GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&pw=%s",
                     getStringFromSharedPreferences(KEY_ID),
                     getStringFromSharedPreferences(KEY_PASSWORD));
-            POST_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s&amp;status=",
+            POST_URL = String.format("https://sourceway.de/admin/online.php?id=%s&pw=%s&status=",
                     getStringFromSharedPreferences(KEY_ID),
                     getStringFromSharedPreferences(KEY_PASSWORD));
         }
