@@ -149,8 +149,8 @@ public class StatusService extends Service {
                     case HttpRequest.STATE_DONE:
                         switch (request.getStatus()) {
                             case HttpURLConnection.HTTP_OK:
-//                                int status = Integer.valueOf(request.getResponseText());
-                                buildNotification(0);
+                                int status = Integer.valueOf(request.getResponseText());
+                                buildNotification(status);
 
                         }
                 }
