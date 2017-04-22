@@ -60,13 +60,10 @@ public class StatusService extends Service {
     private int getStateByDrawable(int drawable) {
         switch (drawable) {
             case R.drawable.green:
-                Log.i("TAG", "green");
                 return 1;
             case R.drawable.yellow:
-                Log.i("TAG", "yellow");
                 return 2;
             case R.drawable.red:
-                Log.i("TAG", "red");
                 return 0;
             default: return 0;
         }
@@ -95,14 +92,13 @@ public class StatusService extends Service {
         Intent intentOpenPlayer = new Intent();
         intentOpenPlayer.setAction(OPEN_ACTIVITY);
 
-        PendingIntent changeStateOne = PendingIntent.getService(this, 0, intentUpdateState, 0);
-        PendingIntent changeStateTwo = PendingIntent.getService(this, 0, intentUpdateStateTwo, 0);
-        PendingIntent openActivity = PendingIntent.getService(this, 0, intentOpenPlayer, 0);
+        PendingIntent changeStateOne = PendingIntent.getService(this, 0, intentUpdateState, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent changeStateTwo = PendingIntent.getService(this, 0, intentUpdateStateTwo, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent openActivity = PendingIntent.getService(this, 0, intentOpenPlayer, PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteViews mNotificationTemplate = new RemoteViews(this.getPackageName(), R.layout.notification_ui);
         Notification.Builder notificationBuilder = new Notification.Builder(this);
-
-        Log.i("TAG", String.valueOf(drawableArray[0]));
+        artImage = null;
         if (artImage == null)
             artImage = BitmapFactory.decodeResource(getResources(), drawableArray[0]);
 
@@ -136,7 +132,7 @@ public class StatusService extends Service {
                 return new int[]{R.drawable.green, R.drawable.yellow, R.drawable.red};
             case 2:
                 return new int[]{R.drawable.yellow, R.drawable.red, R.drawable.green};
-            default: return new int[]{R.drawable.red, R.drawable.green, R.drawable.yellow};
+            default: return new int[]{R.drawable.yellow, R.drawable.red, R.drawable.green};
         }
     }
 
@@ -149,7 +145,8 @@ public class StatusService extends Service {
                     case HttpRequest.STATE_DONE:
                         switch (request.getStatus()) {
                             case HttpURLConnection.HTTP_OK:
-                                int status = Integer.valueOf(request.getResponseText());
+                                Log.i("TAG", "number" + request.getResponseText());
+                                int status = Integer.valueOf(request.getResponseText().trim());
                                 buildNotification(status);
 
                         }
@@ -176,7 +173,6 @@ public class StatusService extends Service {
                     case HttpRequest.STATE_DONE:
                         switch (request.getStatus()) {
                             case HttpURLConnection.HTTP_OK:
-                                request.getResponseText();
                                 getStatus();
                         }
                 }

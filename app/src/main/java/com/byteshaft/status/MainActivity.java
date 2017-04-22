@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     AppGlobals.saveDataToSharedPreferences(AppGlobals.KEY_SECONDS, mIntervalString);
                     AppGlobals.saveDataToSharedPreferences(KEY_PASSWORD, mPasswordString);
                     AppGlobals.saveDataToSharedPreferences(KEY_ID, mIdString);
-                    AppGlobals.GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s",
+                    AppGlobals.GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&pw=%s",
                             getStringFromSharedPreferences(KEY_ID),
                             getStringFromSharedPreferences(KEY_PASSWORD));
                     AppGlobals.saveData(true);
