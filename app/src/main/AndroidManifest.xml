@@ -26,6 +26,13 @@
                 <action android:name="CHANGE_STATUS_TWO"/>
             </intent-filter>
             </service>
+        <receiver
+            android:name=".IntervalReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.interval"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

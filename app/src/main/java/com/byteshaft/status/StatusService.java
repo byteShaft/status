@@ -140,7 +140,7 @@ public class StatusService extends Service {
         }
     }
 
-    private void getStatus() {
+    public void getStatus() {
         HttpRequest request = new HttpRequest(this);
         request.setOnReadyStateChangeListener(new HttpRequest.OnReadyStateChangeListener() {
             @Override
@@ -149,8 +149,8 @@ public class StatusService extends Service {
                     case HttpRequest.STATE_DONE:
                         switch (request.getStatus()) {
                             case HttpURLConnection.HTTP_OK:
-                                request.getResponseText();
-                                buildNotification(2);
+//                                int status = Integer.valueOf(request.getResponseText());
+                                buildNotification(0);
 
                         }
                 }

@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.byteshaft.status.AppGlobals.KEY_ID;
 import static com.byteshaft.status.AppGlobals.KEY_PASSWORD;
 import static com.byteshaft.status.AppGlobals.getStringFromSharedPreferences;
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
             Log.i("TAG", "service null " + String.valueOf(StatusService.getInstance() == null));
             if (StatusService.getInstance() == null) {
                 startService(new Intent(getApplicationContext(), StatusService.class));
+                String intervalInSeconds = AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_SECONDS);
+                int seconds = Integer.parseInt(intervalInSeconds);
+                AlarmHelpers.setAlarmForInterval(TimeUnit.SECONDS.toMillis(seconds));
             }
         }
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
                             getStringFromSharedPreferences(KEY_ID),
                             getStringFromSharedPreferences(KEY_PASSWORD));
                     AppGlobals.saveData(true);
-                    startActivity(new Intent(getApplicationContext(), StatusService.class));
+                    String intervalInSeconds = AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_SECONDS);
+                    int seconds = Integer.parseInt(intervalInSeconds);
+                    AlarmHelpers.setAlarmForInterval(TimeUnit.SECONDS.toMillis(seconds));
+                    startService(new Intent(getApplicationContext(), StatusService.class));
                 }
             }
         });
