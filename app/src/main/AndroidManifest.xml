@@ -12,14 +12,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".StatusService" />
+        <service android:name=".StatusService" >
+            <intent-filter>
+                <action android:name="OPEN_ACTIVITY"/>
+                <action android:name="CHANGE_STATUS_ONE"/>
+                <action android:name="CHANGE_STATUS_TWO"/>
+            </intent-filter>
+            </service>
+        <receiver
+            android:name=".IntervalReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.interval"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

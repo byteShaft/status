@@ -1,23 +1,23 @@
 package com.byteshaft.status;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.byteshaft.requests.HttpRequest;
-
-import java.net.HttpURLConnection;
+import java.util.concurrent.TimeUnit;
 
 import static com.byteshaft.status.AppGlobals.KEY_ID;
 import static com.byteshaft.status.AppGlobals.KEY_PASSWORD;
 import static com.byteshaft.status.AppGlobals.getStringFromSharedPreferences;
 
-public class MainActivity extends AppCompatActivity implements
-        HttpRequest.OnReadyStateChangeListener, HttpRequest.OnErrorListener {
+public class MainActivity extends AppCompatActivity {
 
     private EditText idField;
     private EditText passwordField;
@@ -27,17 +27,33 @@ public class MainActivity extends AppCompatActivity implements
     private String mIdString;
     private String mPasswordString;
     private String mIntervalString;
+    private static MainActivity sInstance;
 
-    private HttpRequest request;
+    public static MainActivity getInstance() {
+        return sInstance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sInstance = this;
         idField = (EditText) findViewById(R.id.id);
         passwordField = (EditText) findViewById(R.id.password);
         intervalField = (EditText) findViewById(R.id.interval);
         saveButton = (Button) findViewById(R.id.button_save);
+        if (AppGlobals.isDataSaved()) {
+            passwordField.setText(AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_PASSWORD));
+            idField.setText(AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_ID));
+            intervalField.setText(AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_SECONDS));
+            Log.i("TAG", "service null " + String.valueOf(StatusService.getInstance() == null));
+            if (StatusService.getInstance() == null) {
+                startService(new Intent(getApplicationContext(), StatusService.class));
+                String intervalInSeconds = AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_SECONDS);
+                int seconds = Integer.parseInt(intervalInSeconds);
+                AlarmHelpers.setAlarmForInterval(TimeUnit.SECONDS.toMillis(seconds));
+            }
+        }
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,7 +65,18 @@ public class MainActivity extends AppCompatActivity implements
                     AppGlobals.GET_URL = String.format("https://sourceway.de/admin/online.php?id=%s&amp;pw=%s",
                             getStringFromSharedPreferences(KEY_ID),
                             getStringFromSharedPreferences(KEY_PASSWORD));
-                    changeStatus();
+                    AppGlobals.saveData(true);
+                    String intervalInSeconds = AppGlobals.getStringFromSharedPreferences(AppGlobals.KEY_SECONDS);
+                    int seconds = Integer.parseInt(intervalInSeconds);
+                    AlarmHelpers.setAlarmForInterval(TimeUnit.SECONDS.toMillis(seconds));
+                    startService(new Intent(getApplicationContext(), StatusService.class));
+                    View currentFocus = getCurrentFocus();
+                    if (currentFocus != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+                        Snackbar.make(findViewById(android.R.id.content), "Service is Running", Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
                 }
             }
         });
@@ -81,31 +108,5 @@ public class MainActivity extends AppCompatActivity implements
             intervalField.setError(null);
         }
         return valid;
-    }
-
-    private void changeStatus() {
-        request = new HttpRequest(this);
-        request.setOnReadyStateChangeListener(this);
-        request.setOnErrorListener(this);
-        request.open("POST", AppGlobals.GET_URL);
-        request.send();
-    }
-
-    @Override
-    public void onReadyStateChange(HttpRequest request, int readyState) {
-        switch (readyState) {
-            case HttpRequest.STATE_DONE:
-                switch (request.getStatus()) {
-                    case HttpURLConnection.HTTP_OK:
-                        request.getResponseText();
-                        Log.e("Status: ", request.getResponseText() + "  " + request.getResponseURL());
-                        startService(new Intent(this, StatusService.class));
-                }
-        }
-    }
-
-    @Override
-    public void onError(HttpRequest request, int readyState, short error, Exception exception) {
-
     }
 }
